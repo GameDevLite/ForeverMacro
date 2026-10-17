@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: ForeverMacros
+## Notes: Standalone macro builder with spell selection, options and live preview.
+## Author: ForeverMacros
+## Version: 0.2.1
+
+Core.lua
+UI.lua
+Spellbook.lua
+Bindings.xml

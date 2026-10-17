@@ -1,0 +1,8 @@
+<Bindings>
+    <Binding name="FOREVERMACROS_OPEN" header="FOREVERMACROS" category="BINDING_HEADER_FOREVERMACROS">
+        ForeverMacros_OpenBuilder();
+    </Binding>
+    <Binding name="FOREVERMACROS_HOVER" header="FOREVERMACROS" category="BINDING_HEADER_FOREVERMACROS">
+        ForeverMacros_OpenHovered();
+    </Binding>
+</Bindings>
