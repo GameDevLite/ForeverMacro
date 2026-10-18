@@ -1,10 +1,12 @@
 ## Interface: 16001
 ## Title: ForeverMacros
-## Notes: Standalone macro builder with spell selection, options and live preview.
+## Notes: Spell and target macro builder with enemy/quest hover import and live preview.
 ## Author: ForeverMacros
-## Version: 0.2.1
+## Version: 0.3.0
 
 Core.lua
+Targets.lua
 UI.lua
+TargetUI.lua
 Spellbook.lua
 Bindings.xml

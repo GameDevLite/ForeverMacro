@@ -2,6 +2,7 @@ local _, Addon = ...
 local panel, selectedSpell, createdIndex
 local mode, spells, filtered, page = "normal", {}, {}, 1
 local PAGE_SIZE = 10
+local spellPicker
 local Refresh, RenderList, SelectSpell
 
 local function Label(parent, text, x, y, width, template)
@@ -73,6 +74,13 @@ Refresh = function()
 end
 
 SelectSpell = function(spell)
+    if spellPicker then
+        local callback = spellPicker
+        spellPicker = nil
+        panel:Hide()
+        callback(spell)
+        return
+    end
     selectedSpell = spell
     mode = "normal"
     panel.spellInput:SetText(spell.name)
@@ -134,7 +142,12 @@ local function EnsurePanel()
     tinsert(UISpecialFrames, "ForeverMacrosFrame")
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -4, -4)
-    Label(panel, "ForeverMacros 0.2.1", 22, -21, nil, "GameFontNormalLarge")
+    Label(panel, "ForeverMacros 0.3.0", 22, -21, nil, "GameFontNormalLarge")
+    Button(panel, "Target macro", 610, -18, 150, function()
+        spellPicker = nil
+        panel:Hide()
+        Addon.OpenTarget()
+    end)
     Label(panel, "1. Select a spell", 24, -59, nil, "GameFontNormal")
     Label(panel, "Search your learned spells", 24, -85)
     panel.search = Input(panel, 30, -106, 215)
@@ -252,6 +265,11 @@ local function EnsurePanel()
         panel.spellInput:ClearFocus()
         panel.name:ClearFocus()
         panel.preview:ClearFocus()
+        if spellPicker then
+            local callback = spellPicker
+            spellPicker = nil
+            callback(nil)
+        end
     end)
     panel:Hide()
 end
@@ -262,13 +280,23 @@ function Addon.Open(spell)
         return
     end
     EnsurePanel()
+    spellPicker = nil
+    if Addon.CloseTarget then Addon.CloseTarget() end
     panel:Show()
     if spell then SelectSpell(spell) else Refresh() end
     Addon.RefreshSpellList()
 end
 
+function Addon.PickTargetSpell(callback)
+    Addon.Open()
+    spellPicker = callback
+    Addon.SetStatus("Choose a spell from the list, or enter its name and click Apply. Escape cancels.")
+end
+
 function Addon.Close()
+    spellPicker = nil
     if panel then panel:Hide() end
+    if Addon.CloseTarget then Addon.CloseTarget() end
 end
 
 function Addon.ShowCreationBlocked()
@@ -276,4 +304,5 @@ function Addon.ShowCreationBlocked()
         panel.create:Disable()
         Addon.SetStatus("The client blocked macro creation. Copy the preview into /macro.")
     end
+    if Addon.TargetCreationBlocked then Addon.TargetCreationBlocked() end
 end

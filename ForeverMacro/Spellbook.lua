@@ -71,6 +71,8 @@ function ForeverMacros_OpenHovered()
         print("ForeverMacros: open the macro builder out of combat.")
         return
     end
+    local names, message, source = Addon.ReadTargetHover()
+    if names then Addon.OpenTarget(names, message, source); return end
     if GameTooltip and GameTooltip:IsShown() and GameTooltip.GetSpell then
         local ok, name, id = pcall(GameTooltip.GetSpell, GameTooltip)
         if ok and (id or name) then
@@ -83,7 +85,8 @@ function ForeverMacros_OpenHovered()
 end
 
 BINDING_NAME_FOREVERMACROS_OPEN = "Open the macro builder"
-BINDING_NAME_FOREVERMACROS_HOVER = "Build a macro from the spell under the cursor"
+BINDING_NAME_FOREVERMACROS_HOVER = "Build a macro from the hovered spell, enemy or quest"
+BINDING_NAME_FOREVERMACROS_TARGET_HOVER = "Build a target macro from the hovered enemy or quest"
 
 local controller = CreateFrame("Frame")
 controller:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -106,8 +109,16 @@ SLASH_FOREVERMACROS1 = "/fm"
 SLASH_FOREVERMACROS2 = "/forevermacros"
 SlashCmdList.FOREVERMACROS = function(message)
     message = Addon.Trim(message)
+    if message == "target" then Addon.OpenTarget(); return end
+    local questID = message:match("^target quest (%d+)$")
+    if questID then
+        local names, note, title = Addon.GetQuestTargets(questID)
+        Addon.OpenTarget(names, note, title)
+        return
+    end
     if message == "help" then
-        print("ForeverMacros 0.2.1: /fm opens the macro builder. /fm SpellName selects a spell.")
+        print("ForeverMacros 0.3.0: /fm opens the macro builder. /fm SpellName selects a spell.")
+        print("/fm target opens the target builder. /fm target quest ID imports a quest's kill objectives.")
         print("Assign a key under Key Bindings > ForeverMacro for the hover shortcut.")
         return
     end
