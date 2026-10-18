@@ -149,8 +149,6 @@ function Addon.BuildTargetBody(text, spell, options)
         if not body then return nil, err or "Choose a spell first." end
         if options.tooltip ~= false then lines[#lines + 1] = "#showtooltip " .. spell.name end
     end
-    -- Always discard the previous target before searching this list.
-    lines[#lines + 1] = "/cleartarget"
     for _, name in ipairs(names) do
         lines[#lines + 1] = (options.exact == false and "/target " or "/targetexact ")
             .. "[noexists][dead] " .. name
